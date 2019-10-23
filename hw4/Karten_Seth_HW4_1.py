@@ -118,7 +118,35 @@ def main2():
         wrt_left.append(1)
         three_d_point = Twl*np.matrix(wrt_left).T
         out.append(np.squeeze(np.asarray(three_d_point.T)).tolist())
-        print(np.round(np.squeeze(np.asarray(three_d_point.T)).tolist()[0:3],5))
+        # print(np.round(np.squeeze(np.asarray(three_d_point.T)).tolist()[0:3],5))
+    _K = np.matrix([[K[0,0], K[0,1], K[0,2], 0],
+                    [K[1,0], K[1,1], K[1,2], 0],
+                    [K[2,0], K[2,1], K[2,2], 0],
+                    [0,0,0,1]])
+    # print(_K)
+    # Reprojection error
+    M_RW = _K*Trw
+    # print(M_RW)
+    M_LW = _K * Tlw
+    # print(M_LW)
+    total_error = 0
+    for actual_l, actual_r, projected in zip(leftpix, rightpix, out):
+        projected = np.matrix(projected).T
+        # print(M_LW)
+        left_projected = M_LW * projected
+        left_projected = left_projected[0:2] / left_projected[2]
+        # print(actual_l[0:2].T)
+        actual_l = actual_l[0:2]
+        actual_r = actual_r[0:2]
+        total_error += np.square(left_projected-actual_l).sum()
+        right_projected = M_RW * projected
+        right_projected = right_projected[0:2] / right_projected[2]
+        total_error += np.square(right_projected-actual_r).sum()
+        # print(total_error)
+        # print(actual_l, "\n", left_projected, "\n", actual_r, "\n", right_projected, "\n")
+
+    mean_error = total_error / (2*len(out))
+    print("The mean squared reprojection error is", mean_error)
     return
 
 def main():
