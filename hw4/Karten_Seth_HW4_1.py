@@ -51,24 +51,39 @@ def main2():
     K = np.matrix([ [-100, 0, 200],
                     [0, -100, 200],
                     [0, 0, 1]])
-    Mextleft = np.matrix([[0.707, 0.707, 0, -3],
-                        [-0.707, 0.707, 0, -0.5],
-                        [0, 0,  1, 3]])
-    Mextright = np.matrix([[0.866, -0.5, 0, -3],
-                        [0.5, 0.866, 0, -0.5],
-                        [0, 0, 1, 3]])
-    p1_w = [2,0,0]
-    p2_w = [3,0,0]
-    p3_w = [3,1,0]
+    Mextleft = np.matrix([  [0,0,-1, 10],
+                            [1,0,0, 0],
+                            [0,-1,0, 0]])
+    Mextright = np.matrix([ [-1.0/np.sqrt(2),0,0, np.sqrt(50)],
+                            [1.0/np.sqrt(2),0,-1.0/np.sqrt(2), np.sqrt(50)],
+                            [0,-1,0, 0] ])
+    # Mextleft = np.matrix([[0.707, 0.707, 0, -3],
+    #                     [-0.707, 0.707, 0, -0.5],
+    #                     [0, 0,  1, 3]])
+    # Mextright = np.matrix([[0.866, -0.5, 0, -3],
+    #                     [0.5, 0.866, 0, -0.5],
+    #                     [0, 0, 1, 3]])
+    # p1_w = [2,0,0]
+    # p2_w = [3,0,0]
+    # p3_w = [3,1,0]
+    p1_w = [-0.5, -0.5, -0.5]
+    p2_w = [0.5, -0.5, -0.5]
+    p3_w = [-0.5, 0.5, -0.5]
     Ps_w = [p1_w, p2_w, p3_w]
     leftpix = []
     rightpix = []
     for p in Ps_w:
         p.append(1)
         pixels = K*Mextleft*np.matrix(p).T
-        leftpix.append(pixels/pixels[2])
+        divisor = 1
+        if pixels[2] != 0:
+            divisor = pixels[2]
+        leftpix.append(pixels/divisor)
         pixels = K*Mextright*np.matrix(p).T
-        rightpix.append(pixels/pixels[2])
+        divisor = 1
+        if pixels[2] != 0:
+            divisor = pixels[2]
+        rightpix.append(pixels/divisor)
     # convert from pixels to rays
     rightray = []
     leftray = []
