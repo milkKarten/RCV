@@ -1,4 +1,44 @@
 import numpy as np
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+def draw3D(pts, ax):
+    xx = np.squeeze(np.asarray(pts.T[0]))
+    xx=np.insert(xx,0,0)
+    yy = np.squeeze(np.asarray(pts.T[1]))
+    yy=np.insert(yy,0,0)
+    zz = np.squeeze(np.asarray(pts.T[2]))
+    zz=np.insert(zz,0,0)
+    # [xx[1],xx[2]], [yy[1],yy[2]]
+    # [xx[1],xx[3]], [yy[1],yy[3]]
+    # [xx[1],xx[4]], [yy[1],yy[4]]
+    # [xx[2],xx[5]], [yy[2],yy[5]]
+    # [xx[2],xx[6]], [yy[2],yy[6]]
+    # [xx[3],xx[5]], [yy[3],yy[5]]
+    # [xx[3],xx[7]], [yy[3],yy[7]]
+    # [xx[4],xx[6]], [yy[4],yy[6]]
+    # [xx[4],xx[7]], [yy[4],yy[7]]
+    # [xx[4],xx[9]], [yy[4],yy[9]]
+    # [xx[5],xx[8]], [yy[5],yy[8]]
+    # [xx[6],xx[8]], [yy[6],yy[8]]
+    # [xx[6],xx[9]], [yy[6],yy[9]]
+    # [xx[7],xx[8]], [yy[7],yy[8]]
+    # [xx[7],xx[9]], [yy[7],yy[9]]
+    # [xx[8],xx[9]], [yy[8],yy[9]]
+    ax.plot([xx[1], xx[2]], [yy[1], yy[2]], [zz[1], zz[2]])
+    ax.plot([xx[2], xx[3]], [yy[2], yy[3]], [zz[2], zz[3]])
+    ax.plot([xx[3],xx[4]], [yy[3], yy[4]], [zz[3], zz[4]])
+    ax.plot([xx[4],xx[1]], [yy[4], yy[1]], [zz[4], zz[1]])
+    ax.plot([xx[5],xx[6]], [yy[5], yy[6]], [zz[5], zz[6]])
+    ax.plot([xx[6],xx[7]], [yy[6], yy[7]], [zz[6], zz[7]])
+    ax.plot([xx[7],xx[8]], [yy[7], yy[8]], [zz[7], zz[8]])
+    ax.plot([xx[8],xx[5]], [yy[8], yy[5]], [zz[8], zz[5]])
+    ax.plot([xx[1],xx[5]], [yy[1], yy[5]], [zz[1], zz[5]])
+    ax.plot([xx[2],xx[6]], [yy[2], yy[6]], [zz[2], zz[6]])
+    ax.plot([xx[3],xx[7]], [yy[3], yy[7]], [zz[3], zz[7]])
+    ax.plot([xx[4],xx[8]], [yy[4], yy[8]], [zz[4], zz[8]])
+    return
 
 def rotate(_Ps, R, t, Ps_new, M_in=None):
     Ps = [p[:] for p in _Ps.copy()]
@@ -47,29 +87,43 @@ def triangulate_midpoint(pl,pr,Rlr,tlr,Twl):
     outpoint = (np.squeeze(np.asarray(a*plt)).tolist() + c*0.5*q).tolist()
     return outpoint
 
-def main2():
+def main():
     K = np.matrix([ [-100, 0, 200],
                     [0, -100, 200],
                     [0, 0, 1]])
-    Mextleft = np.matrix([  [0,0,-1, 10],
-                            [1,0,0, 0],
-                            [0,-1,0, 0]])
-    Mextright = np.matrix([ [-1.0/np.sqrt(2),0,0, np.sqrt(50)],
-                            [1.0/np.sqrt(2),0,-1.0/np.sqrt(2), np.sqrt(50)],
-                            [0,-1,0, 0] ])
-    # Mextleft = np.matrix([[0.707, 0.707, 0, -3],
-    #                     [-0.707, 0.707, 0, -0.5],
-    #                     [0, 0,  1, 3]])
-    # Mextright = np.matrix([[0.866, -0.5, 0, -3],
-    #                     [0.5, 0.866, 0, -0.5],
-    #                     [0, 0, 1, 3]])
+    # Mextleft = np.matrix([  [0,0,-1, 10],
+    #                         [1,0,0, 0],
+    #                         [0,-1,0, 0]])
+    # Mextright = np.matrix([ [-1.0/np.sqrt(2),0,0, np.sqrt(50)],
+    #                         [1.0/np.sqrt(2),0,-1.0/np.sqrt(2), np.sqrt(50)],
+    #                         [0,-1,0, 0] ])
+    Mextleft = np.matrix([[0.707, 0.707, 0, -3],
+                        [-0.707, 0.707, 0, -0.5],
+                        [0, 0,  1, 3]])
+    Mextright = np.matrix([[0.866, -0.5, 0, -3],
+                        [0.5, 0.866, 0, -0.5],
+                        [0, 0, 1, 3]])
     # p1_w = [2,0,0]
     # p2_w = [3,0,0]
     # p3_w = [3,1,0]
-    p1_w = [-0.5, -0.5, -0.5]
-    p2_w = [0.5, -0.5, -0.5]
-    p3_w = [-0.5, 0.5, -0.5]
-    Ps_w = [p1_w, p2_w, p3_w]
+    # Ps_w = [[0-0.5,0-0.5,0-0.5],#1: 2,3,4
+    #      [1-0.5,0-0.5,0-0.5],#2: 5,6
+    #      [0-0.5,1-0.5,0-0.5],#3: 5,7
+    #      [0-0.5,0-0.5,1-0.5],#4: 6,7,9
+    #      [1-0.5,1-0.5,0-0.5],#5: 8
+    #      [1-0.5,0-0.5,1-0.5],#6: 8,9
+    #      [0-0.5,1-0.5,1-0.5],#7: 8,9
+    #      [1-0.5,1-0.5,1-0.5],#8: 9
+    #      [0.5-0.5,0.5-0.5,1.5-0.5]]  #9:
+    Ps_w = [  [2, 0, 0],
+              [3, 0, 0],
+              [3, 1, 0],
+              [2, 1, 0],
+              [2, 0, 1],
+              [3, 0, 1],
+              [3, 1, 1],
+              [2, 1, 1],
+              [2.5, 0.5, 2]]
     leftpix = []
     rightpix = []
     for p in Ps_w:
@@ -134,89 +188,32 @@ def main2():
         projected = np.matrix(projected).T
         # print(M_LW)
         left_projected = M_LW * projected
-        left_projected = left_projected[0:2] / left_projected[2]
+        if left_projected[2] != 0:
+            left_projected = left_projected[0:2] / left_projected[2]
+        else:
+            left_projected = left_projected[0:2] / 1
+
         # print(actual_l[0:2].T)
         actual_l = actual_l[0:2]
         actual_r = actual_r[0:2]
         total_error += np.square(left_projected-actual_l).sum()
         right_projected = M_RW * projected
-        right_projected = right_projected[0:2] / right_projected[2]
+        if right_projected[2] != 0:
+            right_projected = right_projected[0:2] / right_projected[2]
+        else:
+            right_projected = right_projected[0:2] / 1
         total_error += np.square(right_projected-actual_r).sum()
         # print(total_error)
         # print(actual_l, "\n", left_projected, "\n", actual_r, "\n", right_projected, "\n")
 
     mean_error = total_error / (2*len(out))
     print("The mean squared reprojection error is", mean_error)
-    return
 
-def main():
-    p1_w = [-0.5, -0.5, -0.5]
-    p2_w = [0.5, -0.5, -0.5]
-    p3_w = [-0.5, 0.5, -0.5]
-    Ps_w = [p1_w, p2_w, p3_w]
-    # world frame R, t
-    # A: RWA, tWA
-    R = np.matrix([[0,0,-1],[1,0,0],[0,-1,0]])
-    t = np.matrix([10.,0,0]).T
-    Ps_A = []
-    M_A = rotate(Ps_w, R, t, Ps_A)
-
-    # B: RWB, tWB
-    R2 = np.matrix([[-1.0/np.sqrt(2),0,0],[1.0/np.sqrt(2),0,-1.0/np.sqrt(2)],[0,-1,0]])
-    t2 = np.matrix([np.sqrt(50),np.sqrt(50),0]).T
-    Ps_B = []
-    M_B = rotate(Ps_w, R2, t2, Ps_B)
-
-    K = np.matrix([ [-100, 0, 200],
-                    [0, -100, 200],
-                    [0, 0, 1]])
-    Rlr = R.T * R2
-    tlr = R.T * t2
-    print(tlr)
-    sx=1;sy=1
-    ox=200;oy=200
-    f=100
-    for pA, pB in zip(Ps_A, Ps_B):
-        print(pA, pB)
-        pA = np.linalg.inv(K)*np.matrix(pA).T
-        pB = np.linalg.inv(K)*np.matrix(pB).T
-        pA = np.squeeze(np.asarray(pA.T))
-        pB = np.squeeze(np.asarray(pB.T))
-        pl = [(pA[0]-ox)*-1*sx, (pA[1]-oy)*-1*sy, f]
-        pr = [(pB[0]-ox)*-1*sx, (pB[1]-oy)*-1*sy, f]
-
-        # init pl, plr, Rlr, tlr
-        plt = np.matrix(pl).T
-        prt = np.matrix(pr).T
-        # print(np.squeeze(np.asarray(Rlr*prt)), np.squeeze(np.asarray(plt)))
-        q = np.cross(np.squeeze(np.asarray(plt)),np.squeeze(np.asarray(Rlr*prt)));
-        q = np.divide(q, np.linalg.norm(q)) # normalize it
-        # Find the scalars a,b,c from this equation
-        # a (plt  + c (q) = b ( Rlr prt ) + Tlr
-        # Solve 3 equations, 3 unknowns, exact solution
-        A = [np.squeeze(np.asarray(plt)).tolist(),  np.squeeze(np.asarray((-Rlr*prt))).tolist(), np.squeeze(np.asarray(q)).tolist()]
-        _A = np.linalg.inv(A)*tlr;
-        a = _A[0,0]
-        b = _A[1,0]
-        c = _A[2,0]
-        # 3D point is a*plt + c*0.5*q
-
-        # print(np.squeeze(np.asarray(a*plt)).tolist())
-        # print(c*0.5*q)
-        outpoint = np.squeeze(np.asarray(a*plt)).tolist() + c*0.5*q
-        print(outpoint)
-        pL = np.matrix(np.append(outpoint, 1))
-        # print(pL)
-        # print(M_A)
-        M_A = np.matrix([np.squeeze(np.asarray(M_A[0])),
-                        np.squeeze(np.asarray(M_A[1])),
-                        np.squeeze(np.asarray(M_A[2])),
-                        [0,0,0,1]])
-        # print(M_A)
-        print(M_A * pL.T)
-        exit(0)
-
+    fig2 = plt.figure("3D World")
+    ax2 = fig2.gca(projection='3d')
+    draw3D(np.matrix(out), ax2)
+    plt.show()
     return
 
 if __name__ == "__main__":
-    main2()
+    main()

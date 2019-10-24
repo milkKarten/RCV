@@ -41,7 +41,8 @@ def rotate_and_get_lines(R, t, views, axes):
     M = K * R.T
     M_t = K * -R.T*t
     M = np.c_[M, M_t]
-    # print(M)
+    print(M)
+    exit()
     p = []
     for P in Ps:
         P.append(1)
@@ -95,6 +96,7 @@ def main():
     R = np.matrix([[0,0,-1],[1,0,0],[0,-1,0]])
     t = np.matrix([10,0,0]).T
     rotate_and_get_lines(R, t, views, axes)
+    exit()
     R2 = np.matrix([[-1.0/np.sqrt(2),0,0],[1.0/np.sqrt(2),0,-1.0/np.sqrt(2)],[0,-1,0]])
     t2 = np.matrix([np.sqrt(50),np.sqrt(50),0]).T
     rotate_and_get_lines(R2, t2, views, axes)

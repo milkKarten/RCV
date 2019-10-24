@@ -2,7 +2,6 @@
 function outpoint = triangulate_midpoint(pl,pr, Rlr,tlr);
 % outpoint = triangulate_midpoint(rayleft,rayright,R,t);
 % Triangulate two rays for 3d reconstruction 
-fprintf("Triangulating midpoint");
 plt = pl;
 prt = pr;
 % take cross product, to find smallest segment between rays
